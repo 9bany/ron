@@ -25,7 +25,60 @@ ignore:
   extensions: 
     - js
     - ts`)
-
+var ronymlEmptyRootPath = []byte(`
+root_path: ""
+exec_path: "index.js"
+language: "node"
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+var ronymlEmptyExecPath = []byte(`
+root_path: "./"
+exec_path: ""
+language: "node"
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+var ronymlEmptyLanguage = []byte(`
+root_path: "./"
+exec_path: "index.js"
+language: ""
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+var ronymlEmptyWatchExtensions = []byte(`
+root_path: "./"
+exec_path: "index.js"
+language: "node"
+watch:
+  extensions: 
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
 var ronNotyml = []byte(`fuck_you_file`)
 
 const nameFile = FILE_NAME + "." + EXTENSION
@@ -64,11 +117,7 @@ func TestInitConfig(t *testing.T) {
 				require.Equal(t, conf.ExecPath, "index.js")
 				require.Equal(t, conf.Language, "node")
 
-				require.Equal(t, len(conf.Watch.Files), 2)
 				require.Equal(t, len(conf.Watch.Extensions), 2)
-
-				require.Equal(t, conf.Watch.Files[0], "index")
-				require.Equal(t, conf.Watch.Files[1], "server")
 
 				require.Equal(t, conf.Watch.Extensions[0], "js")
 				require.Equal(t, conf.Watch.Extensions[1], "ts")
@@ -149,6 +198,56 @@ func TestGetConfiguration(t *testing.T) {
 	for i := range testCases {
 		tc := testCases[i]
 		t.Run(tc.Name, func(t *testing.T) {
+			err := tc.buildStubs(t)
+			tc.check(t, err)
+		})
+	}
+}
+
+func getValidaConfTest(name string, ronyml []byte, errstring string) struct {
+	name       string
+	buildStubs func(t *testing.T) error
+	check      func(t *testing.T, err error)
+} {
+	return struct {
+		name       string
+		buildStubs func(t *testing.T) error
+		check      func(t *testing.T, err error)
+	}{
+		name: name,
+		buildStubs: func(t *testing.T) error {
+			err := Before(nameFile, ronyml)
+			if err != nil {
+				log.Panic("Can not init unit test")
+			}
+			_, err = InitConf()
+			return err
+		},
+		check: func(t *testing.T, err error) {
+			require.Equal(t, err.Error(), errstring)
+			err = After(nameFile)
+			if err != nil {
+				log.Panic("Can not clear after run unit test")
+			}
+		},
+	}
+}
+
+func TestValidateConf(t *testing.T) {
+	testcases := []struct {
+		name       string
+		buildStubs func(t *testing.T) error
+		check      func(t *testing.T, err error)
+	}{
+		getValidaConfTest("Rootpath empty", ronymlEmptyRootPath, ERORR_ROOT_PATH_EMPTY),
+		getValidaConfTest("Exexpath empty", ronymlEmptyExecPath, ERROR_EXEC_PATH_EMPTY),
+		getValidaConfTest("Language empty", ronymlEmptyLanguage, ERROR_LANGUAGE_EMPTY),
+		getValidaConfTest("Watch extesions empty", ronymlEmptyWatchExtensions, ERROR_EXTENSIONS_EMPTY),
+	}
+
+	for i := range testcases {
+		tc := testcases[i]
+		t.Run(tc.name, func(t *testing.T) {
 			err := tc.buildStubs(t)
 			tc.check(t, err)
 		})
