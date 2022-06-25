@@ -27,7 +27,7 @@ func (conf *Configuration) validate() error {
 	}
 
 	if conf.ExecPath == "" {
-		return errors.New(ERROR_EXAC_PATH_EMPTY)
+		return errors.New(ERROR_EXEC_PATH_EMPTY)
 	}
 
 	if conf.Language == "" {

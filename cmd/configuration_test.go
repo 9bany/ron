@@ -25,7 +25,60 @@ ignore:
   extensions: 
     - js
     - ts`)
-
+var ronymlEmptyRootPath = []byte(`
+root_path: ""
+exec_path: "index.js"
+language: "node"
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+var ronymlEmptyExecPath = []byte(`
+root_path: "./"
+exec_path: ""
+language: "node"
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+var ronymlEmptyLanguage = []byte(`
+root_path: "./"
+exec_path: "index.js"
+language: ""
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+var ronymlEmptyWatchExtensions = []byte(`
+root_path: "./"
+exec_path: "index.js"
+language: "node"
+watch:
+  extensions: 
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
 var ronNotyml = []byte(`fuck_you_file`)
 
 const nameFile = FILE_NAME + "." + EXTENSION
@@ -145,6 +198,95 @@ func TestGetConfiguration(t *testing.T) {
 	for i := range testCases {
 		tc := testCases[i]
 		t.Run(tc.Name, func(t *testing.T) {
+			err := tc.buildStubs(t)
+			tc.check(t, err)
+		})
+	}
+}
+
+func TestValidateConf(t *testing.T) {
+	testcases := []struct {
+		name       string
+		buildStubs func(t *testing.T) error
+		check      func(t *testing.T, err error)
+	}{
+		{
+			name: "Rootpath empty",
+			buildStubs: func(t *testing.T) error {
+				err := Before(nameFile, ronymlEmptyRootPath)
+				if err != nil {
+					log.Panic("Can not init unit test")
+				}
+				_, err = InitConf()
+				return err
+			},
+			check: func(t *testing.T, err error) {
+				require.Equal(t, err.Error(), ERORR_ROOT_PATH_EMPTY)
+				err = After(nameFile)
+				if err != nil {
+					log.Panic("Can not clear after run unit test")
+				}
+			},
+		},
+		{
+			name: "Exexpath empty",
+			buildStubs: func(t *testing.T) error {
+				err := Before(nameFile, ronymlEmptyExecPath)
+				if err != nil {
+					log.Panic("Can not init unit test")
+				}
+				_, err = InitConf()
+				return err
+			},
+			check: func(t *testing.T, err error) {
+				require.Equal(t, err.Error(), ERROR_EXEC_PATH_EMPTY)
+				err = After(nameFile)
+				if err != nil {
+					log.Panic("Can not clear after run unit test")
+				}
+			},
+		},
+		{
+			name: "Language empty",
+			buildStubs: func(t *testing.T) error {
+				err := Before(nameFile, ronymlEmptyLanguage)
+				if err != nil {
+					log.Panic("Can not init unit test")
+				}
+				_, err = InitConf()
+				return err
+			},
+			check: func(t *testing.T, err error) {
+				require.Equal(t, err.Error(), ERROR_LANGUAGE_EMPTY)
+				err = After(nameFile)
+				if err != nil {
+					log.Panic("Can not clear after run unit test")
+				}
+			},
+		},
+		{
+			name: "Watch extesions empty",
+			buildStubs: func(t *testing.T) error {
+				err := Before(nameFile, ronymlEmptyWatchExtensions)
+				if err != nil {
+					log.Panic("Can not init unit test")
+				}
+				_, err = InitConf()
+				return err
+			},
+			check: func(t *testing.T, err error) {
+				require.Equal(t, err.Error(), ERROR_EXTENSIONS_EMPTY)
+				err = After(nameFile)
+				if err != nil {
+					log.Panic("Can not clear after run unit test")
+				}
+			},
+		},
+	}
+
+	for i := range testcases {
+		tc := testcases[i]
+		t.Run(tc.name, func(t *testing.T) {
 			err := tc.buildStubs(t)
 			tc.check(t, err)
 		})
