@@ -64,11 +64,7 @@ func TestInitConfig(t *testing.T) {
 				require.Equal(t, conf.ExecPath, "index.js")
 				require.Equal(t, conf.Language, "node")
 
-				require.Equal(t, len(conf.Watch.Files), 2)
 				require.Equal(t, len(conf.Watch.Extensions), 2)
-
-				require.Equal(t, conf.Watch.Files[0], "index")
-				require.Equal(t, conf.Watch.Files[1], "server")
 
 				require.Equal(t, conf.Watch.Extensions[0], "js")
 				require.Equal(t, conf.Watch.Extensions[1], "ts")
