@@ -204,7 +204,7 @@ func TestGetConfiguration(t *testing.T) {
 	}
 }
 
-func getValidaConfTest(name string, ronyml []byte, errstring string) struct {
+func getTestcaseForValid(name string, ronyml []byte, errstring string) struct {
 	name       string
 	buildStubs func(t *testing.T) error
 	check      func(t *testing.T, err error)
@@ -239,10 +239,10 @@ func TestValidateConf(t *testing.T) {
 		buildStubs func(t *testing.T) error
 		check      func(t *testing.T, err error)
 	}{
-		getValidaConfTest("Rootpath empty", ronymlEmptyRootPath, ERORR_ROOT_PATH_EMPTY),
-		getValidaConfTest("Exexpath empty", ronymlEmptyExecPath, ERROR_EXEC_PATH_EMPTY),
-		getValidaConfTest("Language empty", ronymlEmptyLanguage, ERROR_LANGUAGE_EMPTY),
-		getValidaConfTest("Watch extesions empty", ronymlEmptyWatchExtensions, ERROR_EXTENSIONS_EMPTY),
+		getTestcaseForValid("Rootpath empty", ronymlEmptyRootPath, ERORR_ROOT_PATH_EMPTY),
+		getTestcaseForValid("Exexpath empty", ronymlEmptyExecPath, ERROR_EXEC_PATH_EMPTY),
+		getTestcaseForValid("Language empty", ronymlEmptyLanguage, ERROR_LANGUAGE_EMPTY),
+		getTestcaseForValid("Watch extesions empty", ronymlEmptyWatchExtensions, ERROR_EXTENSIONS_EMPTY),
 	}
 
 	for i := range testcases {
