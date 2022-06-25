@@ -204,84 +204,45 @@ func TestGetConfiguration(t *testing.T) {
 	}
 }
 
+func getValidaConfTest(name string, ronyml []byte, errstring string) struct {
+	name       string
+	buildStubs func(t *testing.T) error
+	check      func(t *testing.T, err error)
+} {
+	return struct {
+		name       string
+		buildStubs func(t *testing.T) error
+		check      func(t *testing.T, err error)
+	}{
+		name: name,
+		buildStubs: func(t *testing.T) error {
+			err := Before(nameFile, ronyml)
+			if err != nil {
+				log.Panic("Can not init unit test")
+			}
+			_, err = InitConf()
+			return err
+		},
+		check: func(t *testing.T, err error) {
+			require.Equal(t, err.Error(), errstring)
+			err = After(nameFile)
+			if err != nil {
+				log.Panic("Can not clear after run unit test")
+			}
+		},
+	}
+}
+
 func TestValidateConf(t *testing.T) {
 	testcases := []struct {
 		name       string
 		buildStubs func(t *testing.T) error
 		check      func(t *testing.T, err error)
 	}{
-		{
-			name: "Rootpath empty",
-			buildStubs: func(t *testing.T) error {
-				err := Before(nameFile, ronymlEmptyRootPath)
-				if err != nil {
-					log.Panic("Can not init unit test")
-				}
-				_, err = InitConf()
-				return err
-			},
-			check: func(t *testing.T, err error) {
-				require.Equal(t, err.Error(), ERORR_ROOT_PATH_EMPTY)
-				err = After(nameFile)
-				if err != nil {
-					log.Panic("Can not clear after run unit test")
-				}
-			},
-		},
-		{
-			name: "Exexpath empty",
-			buildStubs: func(t *testing.T) error {
-				err := Before(nameFile, ronymlEmptyExecPath)
-				if err != nil {
-					log.Panic("Can not init unit test")
-				}
-				_, err = InitConf()
-				return err
-			},
-			check: func(t *testing.T, err error) {
-				require.Equal(t, err.Error(), ERROR_EXEC_PATH_EMPTY)
-				err = After(nameFile)
-				if err != nil {
-					log.Panic("Can not clear after run unit test")
-				}
-			},
-		},
-		{
-			name: "Language empty",
-			buildStubs: func(t *testing.T) error {
-				err := Before(nameFile, ronymlEmptyLanguage)
-				if err != nil {
-					log.Panic("Can not init unit test")
-				}
-				_, err = InitConf()
-				return err
-			},
-			check: func(t *testing.T, err error) {
-				require.Equal(t, err.Error(), ERROR_LANGUAGE_EMPTY)
-				err = After(nameFile)
-				if err != nil {
-					log.Panic("Can not clear after run unit test")
-				}
-			},
-		},
-		{
-			name: "Watch extesions empty",
-			buildStubs: func(t *testing.T) error {
-				err := Before(nameFile, ronymlEmptyWatchExtensions)
-				if err != nil {
-					log.Panic("Can not init unit test")
-				}
-				_, err = InitConf()
-				return err
-			},
-			check: func(t *testing.T, err error) {
-				require.Equal(t, err.Error(), ERROR_EXTENSIONS_EMPTY)
-				err = After(nameFile)
-				if err != nil {
-					log.Panic("Can not clear after run unit test")
-				}
-			},
-		},
+		getValidaConfTest("Rootpath empty", ronymlEmptyRootPath, ERORR_ROOT_PATH_EMPTY),
+		getValidaConfTest("Exexpath empty", ronymlEmptyExecPath, ERROR_EXEC_PATH_EMPTY),
+		getValidaConfTest("Language empty", ronymlEmptyLanguage, ERROR_LANGUAGE_EMPTY),
+		getValidaConfTest("Watch extesions empty", ronymlEmptyWatchExtensions, ERROR_EXTENSIONS_EMPTY),
 	}
 
 	for i := range testcases {
