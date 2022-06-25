@@ -16,6 +16,8 @@ type Configuration struct {
 	RootPath string `yaml:"root_path"`
 	ExecPath string `yaml:"exec_path"`
 	Language string `yaml:"language"`
+	Watch    Watch  `yaml:"watch"`
+	Ignore   Ignore `yaml:"ignore"`
 }
 
 // getConf: read the main file for `ron`
@@ -26,7 +28,7 @@ func getConf(fileName string) (*Configuration, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = yaml.Unmarshal(yamlFile, config)
+	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
 		return nil, err
 	}
