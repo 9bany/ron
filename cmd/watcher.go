@@ -26,7 +26,7 @@ func NewWatcher(RootPath string,
 	}
 }
 
-func (watcher *Watcher) Listening() {
+func (watcher *Watcher) WaitingForChange() {
 	notifyWatcher, err := fsnotify.NewWatcher()
 	watcher.notifyWatcher = notifyWatcher
 	if err != nil {
