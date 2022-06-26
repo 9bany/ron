@@ -8,6 +8,14 @@ const (
 
 type AppControl struct {
 	DispatchChan chan string
+	Conf         *Configuration
+}
+
+func NewAppcontrol(DispatchChan chan string, conf *Configuration) *AppControl {
+	return &AppControl{
+		DispatchChan: DispatchChan,
+		Conf:         conf,
+	}
 }
 
 func (appct *AppControl) start() {
@@ -20,12 +28,12 @@ func (appct *AppControl) restart() {
 
 func (appct *AppControl) stop() {
 	log.Println("Stop server")
-} 
+}
 
 func (appct *AppControl) Listening() {
 	for {
 		select {
-		case action:= <- appct.DispatchChan:
+		case action := <-appct.DispatchChan:
 			switch action {
 			case ACT_RESET:
 				appct.restart()

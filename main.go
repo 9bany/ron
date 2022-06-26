@@ -16,7 +16,7 @@ func main() {
 		log.Panic(err.Error())
 	}
 	cmdWatcher := cmd.NewWatcher(conf.RootPath, done, dispatch, conf.Ignore.Files)
-	appcontrol := cmd.AppControl{}
+	appcontrol := cmd.NewAppcontrol(dispatch, conf)
 
 	go cmdWatcher.WaitingForChange()
 	go appcontrol.Listening()
