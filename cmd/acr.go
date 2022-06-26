@@ -1,5 +1,5 @@
 package cmd
 
 const (
-	ACR_RESET = "ACR_RESET"
+	ACT_RESET = "ACT_RESET"
 )

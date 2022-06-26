@@ -59,7 +59,7 @@ func (watcher *Watcher) Listening() {
 				fsnotify.Create,
 				fsnotify.Remove,
 				fsnotify.Rename:
-				watcher.DispatcherChan <- ACR_RESET
+				watcher.DispatcherChan <- ACT_RESET
 			}
 		case err, ok := <-watcher.notifyWatcher.Errors:
 			if !ok {
