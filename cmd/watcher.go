@@ -24,6 +24,7 @@ func NewWatcher(RootPath string,
 		RootPath:       RootPath,
 		DoneChan:       DoneChan,
 		DispatcherChan: DispatcherChan,
+		IgnorePath:     IgnorePath,
 	}
 }
 

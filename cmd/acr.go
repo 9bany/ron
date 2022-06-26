@@ -125,6 +125,8 @@ func (appct *AppControl) Listening() {
 			case ACT_INIT:
 				appct.start()
 			}
+		case done:= <-appct.DoneChan:
+			if done { return }
 		}
 	}
 }
