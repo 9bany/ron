@@ -1,35 +1,132 @@
 package cmd
 
-import "log"
+import (
+	"fmt"
+	"log"
+	"os"
+	"os/exec"
+	"regexp"
+	"runtime"
+	"strconv"
+	"strings"
+)
 
 const (
 	ACT_RESET = "ACT_RESET"
+	ACT_INIT  = "ACT_INIT"
 )
 
 type AppControl struct {
-	DispatchChan chan string
+	DispatchChan     <-chan string
+	DoneChan         chan bool
+	Conf             *Configuration
+	selectedLanguage *Language
+}
+
+func NewAppcontrol(conf *Configuration, DispatchChan chan string, DoneChan chan bool) *AppControl {
+	return &AppControl{
+		DispatchChan: DispatchChan,
+		Conf:         conf,
+		DoneChan:     DoneChan,
+	}
 }
 
 func (appct *AppControl) start() {
-	log.Println("Start server")
+	var cmd *exec.Cmd
+
+	language, err := GetLanguage(appct.Conf.Language)
+	if err != nil {
+		log.Println(err.Error())
+		appct.DoneChan <- true
+	}
+	appct.selectedLanguage = language
+	// init cmd
+	if language.ExecCmd == "" {
+		cmd = exec.Command(language.ExecPath, appct.Conf.ExecPath)
+	} else {
+		cmd = exec.Command(language.ExecPath, language.ExecCmd, appct.Conf.ExecPath)
+	}
+
+	stdout, err := cmd.StdoutPipe()
+
+	cmd.Stderr = cmd.Stdout
+
+	if err != nil {
+		log.Println(err.Error())
+		appct.DoneChan <- true
+	}
+
+	// start cmd
+	if err = cmd.Start(); err != nil {
+
+		log.Println(err.Error())
+		appct.DoneChan <- true
+	}
+
+	// listen stdout and print out them
+	for {
+		tmp := make([]byte, 1024)
+		_, err := stdout.Read(tmp)
+
+		if !strings.Contains(string(tmp), "signal: killed") {
+			fmt.Print(string(tmp))
+		}
+
+		if err != nil {
+			stdout.Close()
+			break
+
+		}
+	}
+
 }
 
 func (appct *AppControl) restart() {
-	log.Println("restart server")
+	var r *regexp.Regexp
+	var command string
+
+	if runtime.GOOS == "linux" {
+		command = "ps -u"
+	} else if runtime.GOOS == "mac" || runtime.GOOS == "darwin" {
+		command = "ps -a"
+	}
+
+	command += " | grep " + appct.selectedLanguage.BinPath
+	b, _ := exec.Command("/bin/sh", "-c", command).Output()
+
+	r = regexp.MustCompile(fmt.Sprintf(appct.selectedLanguage.ProcessRegexp, appct.Conf.ExecPath))
+	match := r.FindStringSubmatch(string(b))
+
+	if len(match) > 1 {
+		i, err := strconv.Atoi(match[1])
+		if err != nil {
+			appct.DoneChan <- true
+		}
+		p, err := os.FindProcess(i)
+		if err != nil {
+			appct.DoneChan <- true
+		}
+		p.Kill()
+		go appct.start()
+	}
 }
 
-func (appct *AppControl) stop() {
-	log.Println("Stop server")
-} 
-
 func (appct *AppControl) Listening() {
+	go appct.start()
 	for {
 		select {
-		case action:= <- appct.DispatchChan:
+		case action, ok := <-appct.DispatchChan:
+			if !ok {
+				return
+			}
 			switch action {
 			case ACT_RESET:
 				appct.restart()
+			case ACT_INIT:
+				appct.start()
 			}
+		case done:= <-appct.DoneChan:
+			if done { return }
 		}
 	}
 }

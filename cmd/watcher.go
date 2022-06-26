@@ -21,8 +21,10 @@ func NewWatcher(RootPath string,
 	DispatcherChan chan string,
 	IgnorePath []string) *Watcher {
 	return &Watcher{
-		RootPath: RootPath,
-		DoneChan: DoneChan,
+		RootPath:       RootPath,
+		DoneChan:       DoneChan,
+		DispatcherChan: DispatcherChan,
+		IgnorePath:     IgnorePath,
 	}
 }
 
