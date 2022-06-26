@@ -7,4 +7,4 @@ watch:
     - ts
 ignore:
   files:
-    - "/test/"
+    - "./tests/"
