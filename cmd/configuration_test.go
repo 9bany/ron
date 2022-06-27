@@ -9,7 +9,21 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var ronyml = []byte(`root_path: "./"
+func Before(nameFile string, content []byte) error {
+
+	if err := ioutil.WriteFile(nameFile, content, 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
+func After(nameFile string) error {
+	return os.Remove(nameFile)
+}
+
+func TestInitConfig(t *testing.T) {
+	const nameFile = FILE_NAME + "." + EXTENSION
+	var ronyml = []byte(`root_path: "./"
 exec_path: "index.js"
 language: "node"
 watch:
@@ -25,77 +39,6 @@ ignore:
   extensions: 
     - js
     - ts`)
-var ronymlEmptyRootPath = []byte(`
-root_path: ""
-exec_path: "index.js"
-language: "node"
-watch:
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
-var ronymlEmptyExecPath = []byte(`
-root_path: "./"
-exec_path: ""
-language: "node"
-watch:
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
-var ronymlEmptyLanguage = []byte(`
-root_path: "./"
-exec_path: "index.js"
-language: ""
-watch:
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
-var ronymlEmptyWatchExtensions = []byte(`
-root_path: "./"
-exec_path: "index.js"
-language: "node"
-watch:
-  extensions: 
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
-var ronNotyml = []byte(`fuck_you_file`)
-
-const nameFile = FILE_NAME + "." + EXTENSION
-
-func Before(nameFile string, content []byte) error {
-
-	if err := ioutil.WriteFile(nameFile, content, 0644); err != nil {
-		return err
-	}
-	return nil
-}
-
-func After(nameFile string) error {
-	return os.Remove(nameFile)
-}
-
-func TestInitConfig(t *testing.T) {
 
 	testCases := []struct {
 		Name       string
@@ -159,6 +102,8 @@ func TestInitConfig(t *testing.T) {
 }
 
 func TestGetConfiguration(t *testing.T) {
+	const nameFile = FILE_NAME + "." + EXTENSION
+	var ronNotyml = []byte(`fuck_you_file`)
 	testCases := []struct {
 		Name       string
 		buildStubs func(t *testing.T) error
@@ -209,6 +154,7 @@ func getTestcaseForValid(name string, ronyml []byte, errstring string) struct {
 	buildStubs func(t *testing.T) error
 	check      func(t *testing.T, err error)
 } {
+	const nameFile = FILE_NAME + "." + EXTENSION
 	return struct {
 		name       string
 		buildStubs func(t *testing.T) error
@@ -234,6 +180,60 @@ func getTestcaseForValid(name string, ronyml []byte, errstring string) struct {
 }
 
 func TestValidateConf(t *testing.T) {
+	var ronymlEmptyRootPath = []byte(`
+root_path: ""
+exec_path: "index.js"
+language: "node"
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+	var ronymlEmptyExecPath = []byte(`
+root_path: "./"
+exec_path: ""
+language: "node"
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+	var ronymlEmptyLanguage = []byte(`
+root_path: "./"
+exec_path: "index.js"
+language: ""
+watch:
+  extensions: 
+    - js
+    - ts
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
+	var ronymlEmptyWatchExtensions = []byte(`
+root_path: "./"
+exec_path: "index.js"
+language: "node"
+watch:
+  extensions: 
+ignore:
+  files:
+    - config
+  extensions: 
+    - js
+    - ts`)
 	testcases := []struct {
 		name       string
 		buildStubs func(t *testing.T) error

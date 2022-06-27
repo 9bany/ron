@@ -13,6 +13,11 @@ type Language struct {
 }
 
 var supportedLanguages = map[string]*Language{
+	"go": {
+		BinPath:       "go",
+		ExecCmd:       "run",
+		ProcessRegexp: `(\d+).* %s`,
+	},
 	"node": {
 		BinPath:       "node",
 		ProcessRegexp: `(\d+).* %s`,

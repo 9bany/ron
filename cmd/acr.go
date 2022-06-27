@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -31,16 +32,16 @@ func NewAppcontrol(conf *Configuration, DispatchChan chan string, DoneChan chan 
 	}
 }
 
-func (appct *AppControl) start() {
+func (appct *AppControl) initCmd() (*exec.Cmd, io.ReadCloser, error) {
 	var cmd *exec.Cmd
 
 	language, err := GetLanguage(appct.Conf.Language)
 	if err != nil {
 		log.Println(err.Error())
 		appct.DoneChan <- true
+		return nil, nil, err
 	}
 	appct.selectedLanguage = language
-	// init cmd
 	if language.ExecCmd == "" {
 		cmd = exec.Command(language.ExecPath, appct.Conf.ExecPath)
 	} else {
@@ -54,11 +55,19 @@ func (appct *AppControl) start() {
 	if err != nil {
 		log.Println(err.Error())
 		appct.DoneChan <- true
+		return nil, nil, err
 	}
+	return cmd, stdout, nil
+}
 
+func (appct *AppControl) start() {
+	cmd, stdout, err := appct.initCmd()
+	if err != nil {
+		log.Println(err.Error())
+		appct.DoneChan <- true
+	}
 	// start cmd
 	if err = cmd.Start(); err != nil {
-
 		log.Println(err.Error())
 		appct.DoneChan <- true
 	}
@@ -125,8 +134,10 @@ func (appct *AppControl) Listening() {
 			case ACT_INIT:
 				appct.start()
 			}
-		case done:= <-appct.DoneChan:
-			if done { return }
+		case done := <-appct.DoneChan:
+			if done {
+				return
+			}
 		}
 	}
 }
