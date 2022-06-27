@@ -3,8 +3,10 @@ package cmd
 import (
 	"io/fs"
 	"log"
+	"os"
 	"path/filepath"
 
+	"github.com/9bany/ron/loger"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -28,6 +30,18 @@ func NewWatcher(RootPath string,
 	}
 }
 
+func (watcher *Watcher) walking(path string, fun func(path string, info fs.FileInfo, err error) error) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		loger.Error(err.Error())
+		watcher.DoneChan <- true
+	} else {
+		if err = filepath.Walk(path, fun); err != nil {
+			loger.Error(err.Error())
+			watcher.DoneChan <- true
+		}
+	}
+}
+
 func (watcher *Watcher) WaitingForChange() {
 	notifyWatcher, err := fsnotify.NewWatcher()
 	watcher.notifyWatcher = notifyWatcher
@@ -37,17 +51,11 @@ func (watcher *Watcher) WaitingForChange() {
 	}
 
 	defer notifyWatcher.Close()
-
-	if err = filepath.Walk(watcher.RootPath, watcher.fileListening); err != nil {
-		log.Println(err)
-		watcher.DoneChan <- true
-	}
+	
+	watcher.walking(watcher.RootPath, watcher.fileListening)
 	// Ignore listening
 	for _, path := range watcher.IgnorePath {
-		if err = filepath.Walk(path, watcher.fileIgnoreListen); err != nil {
-			log.Println(err)
-			watcher.DoneChan <- true
-		}
+		watcher.walking(path, watcher.fileIgnoreListen)
 	}
 
 	for {
