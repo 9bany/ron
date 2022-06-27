@@ -21,7 +21,7 @@ type Configuration struct {
 }
 
 func (conf *Configuration) validate() error {
-	
+
 	if conf.RootPath == "" {
 		return errors.New(ERORR_ROOT_PATH_EMPTY)
 	}
@@ -46,7 +46,7 @@ func (conf *Configuration) validate() error {
 func getConf(fileName string) (*Configuration, error) {
 	var config *Configuration
 	yamlFile, err := ioutil.ReadFile(fileName)
-	
+
 	if err != nil {
 		return nil, err
 	}

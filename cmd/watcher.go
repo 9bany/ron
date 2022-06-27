@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/9bany/ron/loger"
 	"github.com/fsnotify/fsnotify"
@@ -51,7 +53,7 @@ func (watcher *Watcher) WaitingForChange() {
 	}
 
 	defer notifyWatcher.Close()
-	
+
 	watcher.walking(watcher.RootPath, watcher.fileListening)
 	// Ignore listening
 	for _, path := range watcher.IgnorePath {
@@ -69,7 +71,10 @@ func (watcher *Watcher) WaitingForChange() {
 				fsnotify.Create,
 				fsnotify.Remove,
 				fsnotify.Rename:
-				watcher.DispatcherChan <- ACT_RESET
+				if !strings.Contains(event.Name, fmt.Sprintf("%s.%s", FILE_NAME, EXTENSION)) {
+					watcher.DispatcherChan <- ACT_RESET
+				}
+
 			}
 		case err, ok := <-watcher.notifyWatcher.Errors:
 			if !ok {
