@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/9bany/ron/loger"
+	"github.com/9bany/ron/console"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -34,11 +34,11 @@ func NewWatcher(RootPath string,
 
 func (watcher *Watcher) walking(path string, fun func(path string, info fs.FileInfo, err error) error) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		loger.Error(err.Error())
+		console.Error(err.Error())
 		watcher.DoneChan <- true
 	} else {
 		if err = filepath.Walk(path, fun); err != nil {
-			loger.Error(err.Error())
+			console.Error(err.Error())
 			watcher.DoneChan <- true
 		}
 	}

@@ -1,4 +1,4 @@
-package loger
+package console
 
 var (
 	bCyan = "\033[1;36m"

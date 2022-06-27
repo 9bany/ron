@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/9bany/ron/cmd"
-	"github.com/9bany/ron/loger"
+	"github.com/9bany/ron/console"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	}
 	cmdWatcher := cmd.NewWatcher(conf.RootPath, done, dispatch, conf.Ignore.Files)
 	appcontrol := cmd.NewAppcontrol(conf, dispatch, done)
-	loger.Intro()
+	console.Intro()
 	go appcontrol.Listening()
 	go cmdWatcher.WaitingForChange()
 	<-done
