@@ -1,10 +1,14 @@
 package cmd
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
+	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/9bany/ron/console"
 	"github.com/fsnotify/fsnotify"
 )
 
@@ -28,6 +32,18 @@ func NewWatcher(RootPath string,
 	}
 }
 
+func (watcher *Watcher) walking(path string, fun func(path string, info fs.FileInfo, err error) error) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		console.Error(err.Error())
+		watcher.DoneChan <- true
+	} else {
+		if err = filepath.Walk(path, fun); err != nil {
+			console.Error(err.Error())
+			watcher.DoneChan <- true
+		}
+	}
+}
+
 func (watcher *Watcher) WaitingForChange() {
 	notifyWatcher, err := fsnotify.NewWatcher()
 	watcher.notifyWatcher = notifyWatcher
@@ -38,16 +54,10 @@ func (watcher *Watcher) WaitingForChange() {
 
 	defer notifyWatcher.Close()
 
-	if err = filepath.Walk(watcher.RootPath, watcher.fileListening); err != nil {
-		log.Println(err)
-		watcher.DoneChan <- true
-	}
+	watcher.walking(watcher.RootPath, watcher.fileListening)
 	// Ignore listening
 	for _, path := range watcher.IgnorePath {
-		if err = filepath.Walk(path, watcher.fileIgnoreListen); err != nil {
-			log.Println(err)
-			watcher.DoneChan <- true
-		}
+		watcher.walking(path, watcher.fileIgnoreListen)
 	}
 
 	for {
@@ -61,7 +71,10 @@ func (watcher *Watcher) WaitingForChange() {
 				fsnotify.Create,
 				fsnotify.Remove,
 				fsnotify.Rename:
-				watcher.DispatcherChan <- ACT_RESET
+				if !strings.Contains(event.Name, fmt.Sprintf("%s.%s", FILE_NAME, EXTENSION)) {
+					watcher.DispatcherChan <- ACT_RESET
+				}
+
 			}
 		case err, ok := <-watcher.notifyWatcher.Errors:
 			if !ok {

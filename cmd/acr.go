@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	"github.com/9bany/ron/console"
 )
 
 const (
@@ -122,6 +124,7 @@ func (appct *AppControl) restart() {
 
 func (appct *AppControl) Listening() {
 	go appct.start()
+	console.Listening()
 	for {
 		select {
 		case action, ok := <-appct.DispatchChan:
@@ -131,6 +134,7 @@ func (appct *AppControl) Listening() {
 			switch action {
 			case ACT_RESET:
 				appct.restart()
+				console.Restarting()
 			case ACT_INIT:
 				appct.start()
 			}
