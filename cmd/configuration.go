@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/9bany/ron/console"
 	"gopkg.in/yaml.v2"
 )
 
@@ -67,11 +68,12 @@ func getConf(fileName string) (*Configuration, error) {
 func checkFileIfExist() (string, error) {
 	yml := fmt.Sprintf("%s.%s", FILE_NAME, EXTENSION)
 
-	if _, err := os.Stat(yml); !os.IsNotExist(err) {
-		return yml, nil
+	if _, err := os.Stat(yml); os.IsNotExist(err) {
+		console.Error(err.Error())
+		return "", err
 	}
 
-	return "", errors.New("ron.yml file not found")
+	return yml, nil
 }
 
 // InitConf is the configuration function
