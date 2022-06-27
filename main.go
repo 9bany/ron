@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"os"
 
 	"github.com/9bany/ron/cmd"
 	"github.com/9bany/ron/console"
@@ -14,7 +14,7 @@ func main() {
 
 	conf, err := cmd.InitConf()
 	if err != nil {
-		log.Panic(err.Error())
+		os.Exit(0)
 	}
 	cmdWatcher := cmd.NewWatcher(conf.RootPath, done, dispatch, conf.Ignore.Files)
 	appcontrol := cmd.NewAppcontrol(conf, dispatch, done)
