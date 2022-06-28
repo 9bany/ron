@@ -18,7 +18,7 @@ jobs:
     - name: Test
       run: make test
     - name: Build
-        run: bash ./scripts/build.sh
+      git run: bash ./scripts/build.sh
     - name: Read release.md and use it as a body of new release
       id: read_release
       shell: bash
