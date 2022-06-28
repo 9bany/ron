@@ -23,3 +23,27 @@ func main() {
 	go cmdWatcher.WaitingForChange()
 	<-done
 }
+
+// package main
+
+// import (
+// 	"bytes"
+// 	"fmt"
+// 	"log"
+// 	"os/exec"
+// )
+
+// const ShellToUse = "bash"
+
+
+
+// func main() {
+// 	err, out, errout := Shellout("exec -a ron::golang::1656388862 /usr/local/bin/go run cmd/server.go")
+// 	if err != nil {
+// 		log.Printf("error: %v\n", err)
+// 	}
+// 	fmt.Println("--- stdout ---")
+// 	fmt.Println(out)
+// 	fmt.Println("--- stderr ---")
+// 	fmt.Println(errout)
+// }

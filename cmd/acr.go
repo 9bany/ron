@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -92,6 +93,10 @@ func (appct *AppControl) start() {
 
 }
 
+func fileNameWithoutExtSliceNotation(fileName string) string {
+	return fileName[:len(fileName)-len(filepath.Ext(fileName))]
+}
+
 func (appct *AppControl) restart() {
 	var r *regexp.Regexp
 	var command string
@@ -104,8 +109,11 @@ func (appct *AppControl) restart() {
 
 	command += " | grep " + appct.selectedLanguage.BinPath
 	b, _ := exec.Command("/bin/sh", "-c", command).Output()
+	
+	
+	_, file := filepath.Split(appct.Conf.ExecPath)
 
-	r = regexp.MustCompile(fmt.Sprintf(appct.selectedLanguage.ProcessRegexp, appct.Conf.ExecPath))
+	r = regexp.MustCompile(fmt.Sprintf(appct.selectedLanguage.ProcessRegexp, fileNameWithoutExtSliceNotation(file)))
 	match := r.FindStringSubmatch(string(b))
 
 	if len(match) > 1 {
