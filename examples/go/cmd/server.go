@@ -9,7 +9,7 @@ import (
 func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("New returnc asd some\n"))
+		w.Write([]byte("some"))
 	})
 
 	fmt.Println("server start at port 3000")
