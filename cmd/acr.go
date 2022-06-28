@@ -119,6 +119,8 @@ func (appct *AppControl) restart() {
 		}
 		p.Kill()
 		go appct.start()
+	} else {
+		go appct.start()
 	}
 }
 

@@ -15,6 +15,7 @@ import (
 type Watcher struct {
 	RootPath       string
 	IgnorePath     []string
+	Watch          Watch
 	DispatcherChan chan string
 	DoneChan       chan bool
 	notifyWatcher  *fsnotify.Watcher
@@ -23,12 +24,13 @@ type Watcher struct {
 func NewWatcher(RootPath string,
 	DoneChan chan bool,
 	DispatcherChan chan string,
-	IgnorePath []string) *Watcher {
+	IgnorePath []string, Watch Watch) *Watcher {
 	return &Watcher{
 		RootPath:       RootPath,
 		DoneChan:       DoneChan,
 		DispatcherChan: DispatcherChan,
 		IgnorePath:     IgnorePath,
+		Watch:          Watch,
 	}
 }
 
@@ -67,8 +69,10 @@ func (watcher *Watcher) WaitingForChange() {
 				return
 			}
 			switch event.Op {
+			case fsnotify.Create:
+				watcher.handleCreatenew(event.Name)
+				watcher.DispatcherChan <- ACT_RESET
 			case fsnotify.Write,
-				fsnotify.Create,
 				fsnotify.Remove,
 				fsnotify.Rename:
 				if !strings.Contains(event.Name, fmt.Sprintf("%s.%s", FILE_NAME, EXTENSION)) {
@@ -84,6 +88,10 @@ func (watcher *Watcher) WaitingForChange() {
 		}
 	}
 
+}
+
+func (watcher *Watcher) handleCreatenew(name string) {
+	watcher.walking(name, watcher.fileListening)
 }
 
 func (watcher *Watcher) fileListening(path string, info fs.FileInfo, err error) error {

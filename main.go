@@ -16,7 +16,7 @@ func main() {
 	if err != nil {
 		os.Exit(0)
 	}
-	cmdWatcher := cmd.NewWatcher(conf.RootPath, done, dispatch, conf.Ignore.Files)
+	cmdWatcher := cmd.NewWatcher(conf.RootPath, done, dispatch, conf.Ignore.Files, conf.Watch)
 	appcontrol := cmd.NewAppcontrol(conf, dispatch, done)
 	console.Intro()
 	go appcontrol.Listening()
