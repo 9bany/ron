@@ -13,24 +13,24 @@ import (
 )
 
 type Watcher struct {
-	RootPath       string
-	IgnorePath     []string
-	Watch          Watch
-	DispatcherChan chan string
-	DoneChan       chan bool
-	notifyWatcher  *fsnotify.Watcher
+	RootPath        string
+	IgnorePath      []string
+	WatchExtensions []string
+	DispatcherChan  chan string
+	DoneChan        chan bool
+	notifyWatcher   *fsnotify.Watcher
 }
 
 func NewWatcher(RootPath string,
 	DoneChan chan bool,
 	DispatcherChan chan string,
-	IgnorePath []string, Watch Watch) *Watcher {
+	IgnorePath []string, WatchExtensions []string) *Watcher {
 	return &Watcher{
-		RootPath:       RootPath,
-		DoneChan:       DoneChan,
-		DispatcherChan: DispatcherChan,
-		IgnorePath:     IgnorePath,
-		Watch:          Watch,
+		RootPath:        RootPath,
+		DoneChan:        DoneChan,
+		DispatcherChan:  DispatcherChan,
+		IgnorePath:      IgnorePath,
+		WatchExtensions: WatchExtensions,
 	}
 }
 

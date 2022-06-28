@@ -59,20 +59,6 @@ ignore:
 				require.Equal(t, conf.RootPath, "./")
 				require.Equal(t, conf.ExecPath, "index.js")
 				require.Equal(t, conf.Language, "node")
-
-				require.Equal(t, len(conf.Watch.Extensions), 2)
-
-				require.Equal(t, conf.Watch.Extensions[0], "js")
-				require.Equal(t, conf.Watch.Extensions[1], "ts")
-
-				require.Equal(t, len(conf.Ignore.Files), 1)
-				require.Equal(t, len(conf.Ignore.Extensions), 2)
-
-				require.Equal(t, conf.Ignore.Files[0], "config")
-
-				require.Equal(t, conf.Ignore.Extensions[0], "js")
-				require.Equal(t, conf.Ignore.Extensions[1], "ts")
-
 				err = After(nameFile)
 				if err != nil {
 					log.Panic("Can not clear after run unit test")

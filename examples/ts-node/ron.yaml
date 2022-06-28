@@ -1,7 +1,6 @@
 root_path: "./"
 exec_path: "src/server.ts"
 language: "ts-node"
-watch:
-  extensions: 
-    - js
-    - ts
+watch_extension:
+  - js
+  - ts

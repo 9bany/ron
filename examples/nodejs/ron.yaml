@@ -1,10 +1,9 @@
 root_path: "./"
 exec_path: "index.js"
 language: "node"
-watch:
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - "./tests/"
+watch_extension:
+  - js
+  - ts
+ignore_path:
+  - "./tests/"
+    

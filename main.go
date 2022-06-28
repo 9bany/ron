@@ -16,7 +16,7 @@ func main() {
 	if err != nil {
 		os.Exit(0)
 	}
-	cmdWatcher := cmd.NewWatcher(conf.RootPath, done, dispatch, conf.Ignore.Files, conf.Watch)
+	cmdWatcher := cmd.NewWatcher(conf.RootPath, done, dispatch, conf.IgnorePath, conf.WatchExtensions)
 	appcontrol := cmd.NewAppcontrol(conf, dispatch, done)
 	console.Intro()
 	go appcontrol.Listening()
@@ -34,8 +34,6 @@ func main() {
 // )
 
 // const ShellToUse = "bash"
-
-
 
 // func main() {
 // 	err, out, errout := Shellout("exec -a ron::golang::1656388862 /usr/local/bin/go run cmd/server.go")

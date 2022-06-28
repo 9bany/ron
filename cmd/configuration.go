@@ -14,11 +14,11 @@ import (
 // All the informations and config in the ron.yml
 // And we convert it to the Configuration struct
 type Configuration struct {
-	RootPath string `yaml:"root_path"`
-	ExecPath string `yaml:"exec_path"`
-	Language string `yaml:"language"`
-	Watch    Watch  `yaml:"watch"`
-	Ignore   Ignore `yaml:"ignore"`
+	RootPath        string   `yaml:"root_path"`
+	ExecPath        string   `yaml:"exec_path"`
+	Language        string   `yaml:"language"`
+	WatchExtensions []string `yaml:"watch_extension"`
+	IgnorePath      []string `yaml:"ignore_path"`
 }
 
 func (conf *Configuration) validate() error {
@@ -35,7 +35,7 @@ func (conf *Configuration) validate() error {
 		return errors.New(ERROR_LANGUAGE_EMPTY)
 	}
 
-	if len(conf.Watch.Extensions) == 0 {
+	if len(conf.WatchExtensions) == 0 {
 		return errors.New(ERROR_EXTENSIONS_EMPTY)
 	}
 
