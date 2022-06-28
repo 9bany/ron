@@ -2,5 +2,4 @@ root_path: "./"
 exec_path: "cmd/server.go"
 language: "go"
 watch_extension:
-  - js
-  - ts
+  - go
