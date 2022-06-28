@@ -1,8 +1,9 @@
 name: Build release
 
 on:
-  tags:
-    - v.*
+  push:
+    tags:
+      - "v*"
 
 jobs:
 
@@ -18,7 +19,7 @@ jobs:
     - name: Test
       run: make test
     - name: Build
-      git run: bash ./scripts/build.sh
+      run: bash ./scripts/build.sh
     - name: Read release.md and use it as a body of new release
       id: read_release
       shell: bash
