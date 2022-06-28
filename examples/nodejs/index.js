@@ -1,7 +1,7 @@
 var http = require('http');
 
 http.createServer(function (req, res) {
-  res.write("server");
+  res.write("server asd ok");
   res.end();
 
 }).listen(3000, function(){

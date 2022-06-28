@@ -1,0 +1,7 @@
+root_path: "./"
+exec_path: "cmd/server.go"
+language: "go"
+watch:
+  extensions: 
+    - js
+    - ts
