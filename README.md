@@ -70,3 +70,13 @@ ron
 | NodeJs | node |[example](https://github.com/9bany/ron/tree/master/examples/nodejs)
 | Typescript | ts-node |[example](https://github.com/9bany/ron/tree/master/examples/ts-node)
 
+# Contributing
+
+1. Fork the repository
+1. Create a new branch
+1. Implement your solution
+1. Update your change to release.md file
+1. Commit
+1. Open a Pull Request
+
+Thanks!
