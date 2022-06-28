@@ -22,6 +22,11 @@ var supportedLanguages = map[string]*Language{
 		BinPath:       "node",
 		ProcessRegexp: `(\d+).* %s`,
 	},
+	"ts-node": {
+		BinPath:       "npx",
+		ExecCmd:       "ts-node",
+		ProcessRegexp: `(\d+).* %s`,
+	},
 }
 
 func GetLanguage(name string) (*Language, error) {
@@ -32,7 +37,7 @@ func GetLanguage(name string) (*Language, error) {
 	}
 
 	// check language on machine
-	execPath, err := exec.LookPath(name)
+	execPath, err := exec.LookPath(selectedLanguage.BinPath)
 
 	if err != nil {
 		return nil, err
