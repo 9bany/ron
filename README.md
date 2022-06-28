@@ -20,7 +20,7 @@ Used to build and restart a multiple programing when it crashes or some watched 
 - [Implemented Languages](#implemented-languages)
 
 ## Demo
-<img src="./docs/assets/ron_demo_4_dif.gif" width="500"/>
+<img src="./docs/assets/ron_demo_4_dif.gif" width="600"/>
 
 ## Install
 - Linux and macos
