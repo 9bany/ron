@@ -26,19 +26,11 @@ func TestInitConfig(t *testing.T) {
 	var ronyml = []byte(`root_path: "./"
 exec_path: "index.js"
 language: "node"
-watch:
-  files:
-    - index
-    - server
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
+watch_extension:
+  - js
+  - ts
+ignore_path:
+  - config`)
 
 	testCases := []struct {
 		Name       string
@@ -170,56 +162,34 @@ func TestValidateConf(t *testing.T) {
 root_path: ""
 exec_path: "index.js"
 language: "node"
-watch:
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
+watch_extension:
+  - js
+  - ts
+ignore_path:
+  - config`)
 	var ronymlEmptyExecPath = []byte(`
 root_path: "./"
 exec_path: ""
 language: "node"
-watch:
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
+watch_extension:
+  - js
+  - ts
+ignore_path:
+  - config`)
 	var ronymlEmptyLanguage = []byte(`
 root_path: "./"
 exec_path: "index.js"
 language: ""
-watch:
-  extensions: 
-    - js
-    - ts
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
+watch_extension:
+  - js
+  - ts
+ignore_path:
+  - config`)
 	var ronymlEmptyWatchExtensions = []byte(`
 root_path: "./"
 exec_path: "index.js"
 language: "node"
-watch:
-  extensions: 
-ignore:
-  files:
-    - config
-  extensions: 
-    - js
-    - ts`)
+watch_extension:`)
 	testcases := []struct {
 		name       string
 		buildStubs func(t *testing.T) error
