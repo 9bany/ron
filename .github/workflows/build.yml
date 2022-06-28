@@ -1,0 +1,40 @@
+name: Build release
+
+on:
+  tags:
+    - v.*
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+    - name: Test
+      run: make test
+    - name: Build
+        run: bash ./scripts/build.sh
+    - name: Read release.md and use it as a body of new release
+      id: read_release
+      shell: bash
+      run: |
+        r=$(cat ./release.md)                             # <--- Read release.md (Provide correct path as per your repo)
+        r="${r//'%'/'%25'}"                               # Multiline escape sequences for %
+        r="${r//$'\n'/'%0A'}"                             # Multiline escape sequences for '\n'
+        r="${r//$'\r'/'%0D'}"                             # Multiline escape sequences for '\r'
+        echo "::set-output name=RELEASE_BODY::$r"         # <--- Set environment variable
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./ron
+        tag: ${{ steps.get-version.outputs.version }}
+        overwrite: true
+        file_glob: true
+        body: |
+          ${{ steps.read_release.outputs.RELEASE_BODY }}
