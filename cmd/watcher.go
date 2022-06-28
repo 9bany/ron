@@ -76,7 +76,11 @@ func (watcher *Watcher) WaitingForChange() {
 				fsnotify.Remove,
 				fsnotify.Rename:
 				if !strings.Contains(event.Name, fmt.Sprintf("%s.%s", FILE_NAME, EXTENSION)) {
-					watcher.DispatcherChan <- ACT_RESET
+					for _, element := range watcher.WatchExtensions {
+						if strings.Contains(event.Name, element) {
+							watcher.DispatcherChan <- ACT_RESET
+						}
+					}
 				}
 
 			}
