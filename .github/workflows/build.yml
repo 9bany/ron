@@ -18,6 +18,9 @@ jobs:
         go-version: 1.18
     - name: Test
       run: make test
+    - name: Get version
+      id: get-version
+      run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
     - name: Build
       run: bash ./scripts/build.sh
     - name: Read release.md and use it as a body of new release
