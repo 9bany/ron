@@ -12,14 +12,18 @@
 Used to build and restart a multiple programing when it crashes or some watched file changes.
 <b>Aimed to be used in development only.</b>
 
-# Summary
+## Summary
 
 - [Install](#install)
 - [Ron File](#ron-file)
 - [Example](#example)
 - [Implemented Languages](#implemented-languages)
 
-# Install
+## Install
+- Linux
+```
+$ curl -k -L -s https://github.com/9bany/ron/releases/download/0.0.1/ron > ron;chmod +x ron;sudo mv ron /usr/local/bin
+```
 
 ## Ron file
 At the root of the project you want to observe, create new file with name `ron.yaml`.
@@ -35,7 +39,7 @@ At the root of the project you want to observe, create new file with name `ron.y
 |`watch_extension`| Watch | List of extensions to be observed.
 |`ignore_path`| [string] | List of paths not to be ignore.
 
-# Example
+## Example
 
 Below is a simple example of the `ron.yaml` file
 
