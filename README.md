@@ -20,7 +20,7 @@ Used to build and restart a multiple programing when it crashes or some watched 
 - [Implemented Languages](#implemented-languages)
 
 ## Install
-- Linux
+- Linux and macos
 ```
 $ curl -k -L -s https://github.com/9bany/ron/releases/download/0.0.1/ron > ron;chmod +x ron;sudo mv ron /usr/local/bin
 ```
