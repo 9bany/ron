@@ -8,4 +8,3 @@ watch:
 ignore:
   files:
     - "./tests/"
-    - "./ron.yaml"
